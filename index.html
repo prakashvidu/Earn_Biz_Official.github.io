@@ -26,6 +26,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
 
+        /* Animations */
         @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes pulseGlow { 0% { box-shadow: 0 0 0 0 var(--primary-glow); } 70% { box-shadow: 0 0 0 15px rgba(0, 255, 136, 0); } 100% { box-shadow: 0 0 0 0 rgba(0, 255, 136, 0); } }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
@@ -34,20 +35,29 @@
         #loader { position: fixed; inset: 0; background: #020617; z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .container { padding: 20px; max-width: 450px; margin: auto; padding-bottom: 120px; }
 
+        /* Header */
         .header { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; }
         .logo { font-weight: 800; font-size: 28px; letter-spacing: -1px; }
         .logo span { color: var(--primary); text-shadow: 0 0 15px var(--primary-glow); }
 
+        /* VIP Cards - New Animated UI */
         .vip-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px; }
         .vip-card { 
             background: var(--card-bg); border: 1px solid var(--border); border-radius: 24px; padding: 25px 15px; 
             text-align: center; transition: 0.3s ease; position: relative; overflow: hidden; cursor: pointer;
         }
         .vip-card:active { transform: scale(0.95); }
+        .vip-card::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+            transition: 0.5s;
+        }
+        .vip-card:hover::before { left: 100%; }
         .vip-card b { color: var(--primary); font-size: 16px; display: block; margin-bottom: 5px; }
         .vip-card .price { font-size: 22px; font-weight: 800; margin-bottom: 5px; }
         .vip-card .daily { font-size: 11px; opacity: 0.7; font-weight: 600; }
 
+        /* Wallet & Glass Cards */
         .glass-card { background: var(--card-bg); backdrop-filter: blur(15px); border: 1px solid var(--border); border-radius: 28px; padding: 20px; margin-bottom: 15px; }
         .wallet-card { 
             background: linear-gradient(135deg, #0f172a 0%, #020617 100%); border: 1px solid rgba(0, 255, 136, 0.3); 
@@ -55,13 +65,16 @@
         }
         #disp-bal { font-size: 46px; font-weight: 800; margin: 10px 0; letter-spacing: -1px; }
 
+        /* PIN Security Overlay */
         .pin-overlay { position: fixed; inset: 0; background: #020617; z-index: 20000; display: none; flex-direction: column; align-items: center; justify-content: center; }
         .pin-box { text-align: center; width: 85%; }
         .pin-input { background: rgba(255,255,255,0.05); border: 1px solid var(--primary); padding: 18px; border-radius: 20px; width: 100%; color: white; font-size: 28px; text-align: center; letter-spacing: 12px; margin: 25px 0; outline: none; }
 
+        /* Buttons */
         .btn { width: 100%; padding: 18px; border-radius: 20px; border: none; background: linear-gradient(45deg, #008f51, #00ff88); color: #020617; font-weight: 800; cursor: pointer; transition: 0.3s; }
         .btn:active { transform: scale(0.97); }
 
+        /* Nav Bar */
         nav { 
             position: fixed; bottom: 25px; left: 20px; right: 20px; background: rgba(15, 23, 42, 0.85); 
             backdrop-filter: blur(20px); padding: 12px; display: flex; justify-content: space-around; 
@@ -71,26 +84,28 @@
         .nav-item.active { color: var(--primary); font-weight: 800; transform: translateY(-5px); }
         .nav-icon { font-size: 22px; margin-bottom: 4px; display: block; }
 
+        /* Modals */
         .modal-overlay { position: fixed; inset: 0; background: rgba(2, 6, 23, 0.95); backdrop-filter: blur(10px); display: none; align-items: center; justify-content: center; z-index: 15000; padding: 25px; }
         .modal-card { background: #0f172a; border: 1px solid var(--border); border-radius: 32px; width: 100%; max-width: 400px; padding: 35px; text-align: center; position: relative; }
 
         .hidden { display: none; }
     </style>
 </head>
-<body>
-
-<div id="loader">
-    <div class="logo">EARN<span>BIZ</span></div>
-    <div style="font-size: 10px; opacity: 0.5; color: white; letter-spacing: 4px; margin-top: 15px;">SYNCING WITH FIREBASE...</div>
-</div>
+<body onload="checkPinOnLoad()">
 
 <div id="pin-screen" class="pin-overlay">
     <div class="pin-box">
         <div class="logo">EARN<span>BIZ</span></div>
         <h3 style="margin-top: 20px; color: white;">Unlock Wallet</h3>
+        <p style="font-size: 12px; opacity: 0.5; margin-top: 5px;">Please enter your 4-digit security PIN</p>
         <input type="password" id="entry-pin" class="pin-input" maxlength="4" inputmode="numeric" placeholder="••••">
         <button class="btn" onclick="verifyPin()">UNLOCK ACCESS</button>
     </div>
+</div>
+
+<div id="loader">
+    <div class="logo">EARN<span>BIZ</span></div>
+    <div style="font-size: 10px; opacity: 0.5; color: white; letter-spacing: 4px; margin-top: 15px;">INITIALIZING V25 ENGINE...</div>
 </div>
 
 <div class="container">
@@ -102,59 +117,106 @@
             </button>
         </div>
 
-        <div id="bonus-notice" class="glass-card hidden" style="border-left: 5px solid #ffd700; background: rgba(255, 215, 0, 0.1); display: flex; align-items: center; justify-content: space-between;">
+        <div id="bonus-notice" class="glass-card" style="border-left: 5px solid #ffd700; background: rgba(255, 215, 0, 0.1); display: flex; align-items: center; justify-content: space-between;">
             <div>
-                <b style="font-size: 15px; display: block;">Welcome Bonus! 🎁</b>
-                <span style="font-size: 11px; opacity: 0.8;">Claim your Rs. 100.00 reward.</span>
+                <b style="font-size: 15px; display: block;">Welcome Bonus! ??</b>
+                <span style="font-size: 11px; opacity: 0.8;">Claim your Rs. 100.00 reward now.</span>
             </div>
             <button onclick="claimBonus()" style="background:#ffd700; color:#000; border:none; padding:10px 18px; border-radius:15px; font-weight:800; font-size:12px; cursor:pointer;">CLAIM</button>
+        </div>
+
+        <div class="glass-card" style="border-left: 5px solid #229ED9; background: rgba(34, 158, 217, 0.1); display: flex; align-items: center; justify-content: space-between;">
+            <div style="font-size: 12px;">?? <b>Official Community</b><br>Join Telegram for daily updates.</div>
+            <a href="https://t.me/Earnbize_Official" target="_blank" style="background:#229ED9; color:white; padding:10px 18px; border-radius:15px; text-decoration:none; font-size:11px; font-weight:800;">JOIN NOW</a>
         </div>
 
         <div class="glass-card wallet-card">
             <small style="opacity:0.6; letter-spacing:3px; font-weight:700;">TOTAL BALANCE</small>
             <h1 id="disp-bal">Rs. 0.00</h1>
+            <div style="margin-top:15px; font-size: 11px; opacity: 0.6;">
+                <i class="fas fa-shield-check"></i> Secure Mining Assets
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px;">
+            <div class="glass-card" style="margin-bottom:0; text-align:center; padding:15px;">
+                <small style="font-size:9px; opacity:0.5; display:block; margin-bottom:5px;">ACTIVE USERS</small>
+                <b style="color:var(--primary); font-size:18px;">34,501+</b>
+            </div>
+            <div class="glass-card" style="margin-bottom:0; text-align:center; padding:15px;">
+                <small style="font-size:9px; opacity:0.5; display:block; margin-bottom:5px;">PAYOUTS</small>
+                <b style="color:var(--primary); font-size:18px;">12,840+</b>
+            </div>
         </div>
 
         <div class="glass-card" style="text-align:center; border: 1px solid rgba(0,255,136,0.2); animation: float 4s ease-in-out infinite;">
-            <div id="mining-anim" class="hidden"><i class="fas fa-microchip fa-spin" style="color:var(--primary); font-size:35px; margin-bottom:10px;"></i></div>
-            <small style="opacity:0.5; font-size:10px;">PENDING MINING PROFIT</small>
+            <div id="mining-anim" class="hidden" style="margin-bottom:15px;">
+                <i class="fas fa-microchip fa-spin" style="color:var(--primary); font-size:35px;"></i>
+            </div>
+            <small style="opacity:0.5; font-size:10px; letter-spacing:1px;">PENDING MINING PROFIT</small>
             <h2 id="disp-profit" style="color:var(--primary); font-size:32px; margin:5px 0;">Rs. 0.0000</h2>
-            <div id="idle-msg" style="opacity:0.4; font-size:12px;">Engine Idle.</div>
+            <div id="active-miner-info" class="hidden" style="margin-top:10px; padding-top:10px; border-top: 1px solid rgba(255,255,255,0.05); font-size:13px;">
+                <span id="m-name" style="font-weight:800;">--</span> | <span id="m-daily" style="color:var(--primary);">Rs. 0.00</span>
+            </div>
+            <div id="idle-msg" style="opacity:0.4; font-size:12px;">Engine Idle. Activate a Miner to Start.</div>
         </div>
     </div>
 
     <div id="store-view" class="page hidden fade-in">
-        <h3 style="text-align:center; margin-bottom:20px;">MINING PACKAGES</h3>
+        <h3 style="text-align:center; margin-bottom:20px; letter-spacing:1px;">MINING PACKAGES</h3>
         <div class="vip-grid" id="vip-list"></div>
     </div>
 
     <div id="payout-view" class="page hidden fade-in">
         <h3 style="text-align:center; margin-bottom:20px;">WITHDRAW FUNDS</h3>
         <div class="glass-card">
-            <input type="number" id="w-amt" style="width:100%; background:rgba(0,0,0,0.2); border:none; color:white; padding:15px; border-radius:15px; margin-bottom:10px;" placeholder="Amount (Min 50)">
-            <input type="text" id="w-wallet" style="width:100%; background:rgba(0,0,0,0.2); border:none; color:white; padding:15px; border-radius:15px; margin-bottom:15px;" placeholder="Wallet/Bank Details">
-            <button class="btn" onclick="handleWithdraw()">SUBMIT REQUEST</button>
+            <div style="background:rgba(0,0,0,0.2); padding:15px; border-radius:18px; margin-bottom:12px;">
+                <label style="font-size:11px; opacity:0.5; display:block; margin-bottom:5px;">Amount to Withdraw (Rs.)</label>
+                <input type="number" id="w-amt" style="width:100%; background:transparent; border:none; color:white; font-size:20px; font-weight:800; outline:none;" placeholder="0.00">
+            </div>
+            <div style="background:rgba(0,0,0,0.2); padding:15px; border-radius:18px; margin-bottom:20px;">
+                <label style="font-size:11px; opacity:0.5; display:block; margin-bottom:5px;">Receiver Details (Bank/Wallet)</label>
+                <input type="text" id="w-wallet" style="width:100%; background:transparent; border:none; color:white; font-size:16px; outline:none;" placeholder="Binance Id / Bank Detailsr">
+            </div>
+            <button class="btn" onclick="handleWithdraw()"><i class="fas fa-paper-plane"></i> SUBMIT REQUEST</button>
         </div>
         <div id="history-list"></div>
     </div>
 
     <div id="profile-view" class="page hidden fade-in">
         <div style="text-align:center; padding:30px 20px;">
-            <div style="width:85px; height:85px; background:var(--card-bg); border:3px solid var(--primary); border-radius:50%; margin:auto; display:flex; align-items:center; justify-content:center; font-size:35px;"><i class="fas fa-user-shield"></i></div>
-            <h3 id="u-name" style="margin-top:15px;">User</h3>
-            <p id="u-id-display" style="opacity:0.5; font-size:12px;">ID: --</p>
+            <div style="width:85px; height:85px; background:var(--card-bg); border:3px solid var(--primary); border-radius:50%; margin:auto; display:flex; align-items:center; justify-content:center; font-size:35px; box-shadow: 0 0 20px var(--primary-glow);"><i class="fas fa-user-shield"></i></div>
+            <h3 id="u-name" style="margin-top:15px;">Premium Member</h3>
+            <p id="u-id-display" style="opacity:0.5; font-size:12px;">ID: EB-0000</p>
         </div>
-        <button class="btn" onclick="toggleModal(true)" style="margin-bottom:10px;">DEPOSIT FUNDS</button>
-        <button class="btn" onclick="setupPin()" id="pin-btn-text">SET SECURITY PIN</button>
+        
+        <div class="glass-card">
+            <div style="display:flex; justify-content:space-between; margin-bottom:15px; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:12px;">
+                <span>Security PIN</span>
+                <button onclick="setupPin()" id="pin-btn-text" style="background:rgba(0,255,136,0.1); border:1px solid var(--primary); color:var(--primary); padding:6px 15px; border-radius:10px; font-size:11px; cursor:pointer; font-weight:800;">SET PIN</button>
+            </div>
+            <div style="display:flex; justify-content:space-between;">
+                <span style="opacity:0.6;">Total Payouts</span>
+                <b id="p-bal" style="color:var(--primary);">Rs. 0.00</b>
+            </div>
+        </div>
+
+        <button class="btn" onclick="toggleModal(true)" style="margin-bottom:12px;"><i class="fas fa-wallet"></i> DEPOSIT FUNDS</button>
+        <button class="btn" style="background:transparent; border:1px solid #ef4444; color:#ef4444;" onclick="location.reload()">LOGOUT</button>
     </div>
 </div>
 
 <div class="modal-overlay" id="dep-modal">
     <div class="modal-card">
         <span style="position:absolute; right:20px; top:20px; font-size:24px; cursor:pointer;" onclick="toggleModal(false)">×</span>
-        <h2>Deposit</h2>
-        <p style="margin:20px 0; font-size:14px; opacity:0.8;">Contact our official agent for deposits.</p>
-        <a href="https://t.me/EarnBiz_Cash_Agent_Official" target="_blank" class="btn" style="text-decoration:none; display:block;">Contact Telegram</a>
+        <div style="font-size: 50px; color: var(--primary); margin-bottom: 20px;"><i class="fas fa-university"></i></div>
+        <h2 style="margin-bottom: 10px; color:white;">Deposit Funds</h2>
+        <p style="font-size: 14px; line-height: 1.6; color: #cbd5e1; margin-bottom: 25px;">
+            ??? Platform ??? ????? ??????? ????? ???? ??? ?????? ??? ???? ??? Telegram ????????? ??????? ??????.
+            <br><br>
+            Please contact our official agent to deposit funds securely.
+        </p>
+        <a href="https://t.me/EarnBiz_Cash_Agent_Official" target="_blank" style="background:#229ED9; color:white; text-decoration:none; padding:18px; border-radius:18px; display:block; font-weight:800; box-shadow: 0 4px 15px rgba(34, 158, 217, 0.4);"><i class="fab fa-telegram"></i> Contact Deposit Agent</a>
     </div>
 </div>
 
@@ -165,150 +227,114 @@
     <div class="nav-item" onclick="showPage('profile-view', this)"><span class="nav-icon"><i class="fas fa-circle-user"></i></span>Account</div>
 </nav>
 
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
-    import { getDatabase, ref, set, onValue, update } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-database.js";
-
-    const firebaseConfig = {
-        apiKey: "AIzaSyAN4bAVG0rO8fCLsNWmEU3XACToKFFMjy4",
-        authDomain: "earnbizofficial.firebaseapp.com",
-        projectId: "earnbizofficial",
-        storageBucket: "earnbizofficial.firebasestorage.app",
-        messagingSenderId: "1076161934726",
-        appId: "1:1076161934726:web:a1610a341353ec6cb4a807",
-        measurementId: "G-Z19B4YK6E8"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-
-    // User State
-    let userId = localStorage.getItem('eb_user_id') || "EB-" + Math.floor(1000 + Math.random() * 9000);
-    localStorage.setItem('eb_user_id', userId);
-
-    let userData = {
-        balance: 0,
-        miningProfit: 0,
-        dailyRate: 0,
-        bonusClaimed: false,
-        pin: ""
-    };
-
-    const userRef = ref(db, 'users/' + userId);
-
-    // Initial Data Fetch
-    onValue(userRef, (snapshot) => {
-        const data = snapshot.val();
-        if (data) {
-            userData = data;
-        } else {
-            // New User Setup
-            set(userRef, userData);
-        }
-        updateUI();
-        document.getElementById('loader').style.display = 'none';
-        if(userData.pin && !sessionStorage.getItem('unlocked')) {
-            document.getElementById('pin-screen').style.display = 'flex';
-        }
-    });
-
-    window.updateUI = function() {
-        document.getElementById('disp-bal').innerText = "Rs. " + userData.balance.toFixed(2);
-        document.getElementById('disp-profit').innerText = "Rs. " + userData.miningProfit.toFixed(4);
-        document.getElementById('u-id-display').innerText = "ID: " + userId;
-        document.getElementById('pin-btn-text').innerText = userData.pin ? "CHANGE PIN" : "SET SECURITY PIN";
-        
-        if(!userData.bonusClaimed) document.getElementById('bonus-notice').classList.remove('hidden');
-        else document.getElementById('bonus-notice').classList.add('hidden');
-
-        if(userData.dailyRate > 0) {
-            document.getElementById('mining-anim').classList.remove('hidden');
-            document.getElementById('idle-msg').classList.add('hidden');
-        }
-    };
-
-    // Mining Loop
-    setInterval(() => {
-        if(userData.dailyRate > 0) {
-            userData.miningProfit += (userData.dailyRate / 86400);
-            updateUI();
-            // Sync to Firebase every 10 seconds to save bandwidth
-            if(Math.floor(Date.now()/1000) % 10 === 0) {
-                update(userRef, { miningProfit: userData.miningProfit });
-            }
-        }
-    }, 1000);
-
-    window.claimBonus = function() {
-        userData.balance += 100;
-        userData.bonusClaimed = true;
-        update(userRef, { balance: userData.balance, bonusClaimed: true });
-        alert("Bonus Claimed!");
-    };
-
-    window.buyPlan = function(id) {
-        const plans = [
-            {name:"VIP 1", price:500, daily:45}, {name:"VIP 2", price:1000, daily:95},
-            {name:"VIP 3", price:1500, daily:145}, {name:"VIP 15", price:10000, daily:1550}
-        ];
-        let p = plans[id] || {price: 500, daily: 45}; 
-        if(userData.balance >= p.price) {
-            userData.balance -= p.price;
-            userData.dailyRate += p.daily;
-            update(userRef, { balance: userData.balance, dailyRate: userData.dailyRate });
-            alert(p.name + " Activated!");
-        } else alert("Insufficient Balance!");
-    };
-
-    window.verifyPin = function() {
-        let input = document.getElementById('entry-pin').value;
-        if(input === userData.pin) {
-            document.getElementById('pin-screen').style.display = 'none';
-            sessionStorage.setItem('unlocked', 'true');
-        } else alert("Wrong PIN!");
-    };
-
-    window.setupPin = function() {
-        let p = prompt("Enter 4-digit PIN:");
-        if(p && p.length === 4) {
-            update(userRef, { pin: p });
-            alert("PIN Saved!");
-        }
-    };
-
-    window.handleWithdraw = function() {
-        let amt = parseFloat(document.getElementById('w-amt').value);
-        if(amt >= 50 && userData.balance >= amt) {
-            userData.balance -= amt;
-            update(userRef, { balance: userData.balance });
-            alert("Withdrawal Requested!");
-        } else alert("Invalid Amount!");
-    };
-</script>
-
 <script>
-    // Traditional UI Logic
+    let state = { mainBalance: 0, miningProfit: 0, dailyRate: 0, accID: "EB-" + Math.floor(1000 + Math.random() * 9000), history: [], activeMiner: null };
+    const plans = [{id:0,name:"VIP 0",price:100,daily:10},{id:1,name:"VIP 1",price:500,daily:45},{id:2,name:"VIP 2",price:1000,daily:95},{id:3,name:"VIP 3",price:1500,daily:145},{id:4,name:"VIP 4",price:2000,daily:200},{id:5,name:"VIP 5",price:2500,daily:265},{id:6,name:"VIP 6",price:3000,daily:330},{id:7,name:"VIP 7",price:4000,daily:460},{id:8,name:"VIP 8",price:5000,daily:600},{id:9,name:"VIP 9",price:6000,daily:740},{id:10,name:"VIP 10",price:7000,daily:880},{id:11,name:"VIP 11",price:8000,daily:1020},{id:12,name:"VIP 12",price:8500,daily:1100},{id:13,name:"VIP 13",price:9000,daily:1250},{id:14,name:"VIP 14",price:9500,daily:1380},{id:15,name:"VIP 15",price:10000,daily:1550}];
+
+    // PIN SYSTEM
+    function checkPinOnLoad() {
+        if(localStorage.getItem('eb_user_pin')) document.getElementById('pin-screen').style.display = 'flex';
+        updatePinBtn();
+    }
+    function verifyPin() {
+        if(document.getElementById('entry-pin').value === localStorage.getItem('eb_user_pin')) {
+            document.getElementById('pin-screen').style.display = 'none';
+        } else {
+            alert("Incorrect PIN!"); document.getElementById('entry-pin').value = "";
+        }
+    }
+    function setupPin() {
+        if(localStorage.getItem('eb_user_pin')) {
+            if(confirm("Disable PIN Protection?")) { localStorage.removeItem('eb_user_pin'); alert("Security Disabled."); }
+        } else {
+            let p = prompt("Set 4-Digit PIN:");
+            if(p && p.length === 4) { localStorage.setItem('eb_user_pin', p); alert("PIN Set Successfully!"); }
+        }
+        updatePinBtn();
+    }
+    function updatePinBtn() { 
+        let b = document.getElementById('pin-btn-text');
+        b.innerText = localStorage.getItem('eb_user_pin') ? "DISABLE PIN" : "SET PIN";
+    }
+
+    // CORE
+    window.onload = () => {
+        document.getElementById('u-id-display').innerText = "ID: " + state.accID;
+        if(localStorage.getItem('eb_v25_bonus')) { state.mainBalance = 100; document.getElementById('bonus-notice').classList.add('hidden'); }
+        setTimeout(() => document.getElementById('loader').style.display='none', 2000);
+        renderVIPs(); startMining(); updateUI(); checkPinOnLoad();
+    };
+
+    function claimBonus() {
+        state.mainBalance = 100; localStorage.setItem('eb_v25_bonus', 'true');
+        document.getElementById('bonus-notice').style.display = 'none'; updateUI();
+        alert("Rs. 100.00 Welcome Bonus Claimed!");
+    }
+
     function toggleTheme() {
         document.body.classList.toggle('light-mode');
         document.getElementById('theme-icon').className = document.body.classList.contains('light-mode') ? "fas fa-sun" : "fas fa-moon";
     }
+
+    function toggleModal(show) { document.getElementById('dep-modal').style.display = show ? 'flex' : 'none'; }
+
+    function startMining() {
+        setInterval(() => { if(state.dailyRate > 0) { state.miningProfit += (state.dailyRate / 86400); updateUI(); } }, 1000);
+    }
+
+    function updateUI() {
+        document.getElementById('disp-bal').innerText = "Rs. " + state.mainBalance.toLocaleString(undefined, {minimumFractionDigits: 2});
+        document.getElementById('disp-profit').innerText = "Rs. " + state.miningProfit.toFixed(4);
+        if(state.dailyRate > 0) {
+            document.getElementById('mining-anim').classList.remove('hidden');
+            document.getElementById('active-miner-info').classList.remove('hidden');
+            document.getElementById('idle-msg').classList.add('hidden');
+            document.getElementById('m-name').innerText = state.activeMiner.name;
+            document.getElementById('m-daily').innerText = "Rs. " + state.activeMiner.daily + ".00";
+        }
+    }
+
+    function renderVIPs() {
+        document.getElementById('vip-list').innerHTML = plans.map(p => `
+            <div class="vip-card" onclick="buyPlan(${p.id})">
+                <b>${p.name}</b>
+                <div class="price">Rs. ${p.price}</div>
+                <div class="daily">Daily Profit: Rs. ${p.daily}</div>
+            </div>`).join('');
+    }
+
+    function buyPlan(id) {
+        let p = plans.find(x => x.id === id);
+        if(state.mainBalance >= p.price) {
+            state.mainBalance -= p.price; state.dailyRate += p.daily; state.activeMiner = p;
+            updateUI(); alert(`${p.name} Activated!`);
+        } else alert("Insufficient Balance!");
+    }
+
+    function handleWithdraw() {
+        let a = parseFloat(document.getElementById('w-amt').value);
+        if(a >= 50 && state.mainBalance >= a) {
+            state.mainBalance -= a;
+            state.history.unshift({id: "TX-"+Math.floor(Math.random()*900000), amount: a, status: 'Pending', date: new Date().toLocaleTimeString()});
+            renderHistory(); updateUI(); alert("Request Submitted!");
+        } else alert("Min Rs. 50 required!");
+    }
+
+    function renderHistory() {
+        document.getElementById('history-list').innerHTML = state.history.map(h => `
+            <div class="glass-card" style="display:flex; justify-content:space-between; align-items:center; padding:15px;">
+                <div><b>Rs. ${h.amount}</b><br><small style="font-size:10px; opacity:0.5;">${h.date}</small></div>
+                <span style="color:#f59e0b; font-size:11px; font-weight:800;">PENDING</span>
+            </div>`).join('');
+    }
+
     function showPage(id, el) {
         document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
         document.getElementById(id).classList.remove('hidden');
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
         el.classList.add('active');
+        window.scrollTo(0,0);
     }
-    function toggleModal(show) { document.getElementById('dep-modal').style.display = show ? 'flex' : 'none'; }
-
-    // Manual Store Rendering
-    const storePlans = [{id:0,name:"VIP 1",price:500,daily:45},{id:1,name:"VIP 2",price:1000,daily:95},{id:2,name:"VIP 3",price:1500,daily:145},{id:3,name:"VIP 15",price:10000,daily:1550}];
-    document.getElementById('vip-list').innerHTML = storePlans.map(p => `
-        <div class="vip-card" onclick="buyPlan(${p.id})">
-            <b>${p.name}</b>
-            <div class="price">Rs. ${p.price}</div>
-            <div class="daily">Daily: Rs. ${p.daily}</div>
-        </div>`).join('');
 </script>
-
 </body>
-</html>
+</html> 
