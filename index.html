@@ -3,68 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Earn Biz | Official V25 Ultra Premium</title>
+    <title>Earn Biz | V25 Ultra Premium</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --primary: #00ff88; --primary-glow: rgba(0, 255, 136, 0.4); --bg: #020617; --card-bg: rgba(15, 23, 42, 0.7); --border: rgba(255, 255, 255, 0.1); --text: #ffffff; }
+        :root { --primary: #00ff88; --bg: #020617; --card-bg: rgba(15, 23, 42, 0.7); --border: rgba(255, 255, 255, 0.1); --text: #ffffff; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
         body { background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
         .container { padding: 20px; max-width: 450px; margin: auto; padding-bottom: 120px; }
         .hidden { display: none !important; }
         
-        /* Auth */
+        /* Auth Screens */
         .auth-screen { position: fixed; inset: 0; background: var(--bg); z-index: 30000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 25px; }
         .input-group { background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 18px; padding: 15px; margin-bottom: 12px; width: 100%; max-width: 350px; display: flex; align-items: center; }
         .input-group input { background: transparent; border: none; color: white; width: 100%; margin-left: 10px; outline: none; }
         
-        /* Dashboard UI */
+        /* UI Components */
         .glass-card { background: var(--card-bg); backdrop-filter: blur(15px); border: 1px solid var(--border); border-radius: 28px; padding: 20px; margin-bottom: 15px; }
-        .wallet-card { background: linear-gradient(135deg, #0f172a 0%, #020617 100%); border: 1px solid var(--primary); text-align: center; padding: 30px; }
-        .btn { width: 100%; padding: 18px; border-radius: 20px; border: none; background: linear-gradient(45deg, #008f51, #00ff88); color: #020617; font-weight: 800; cursor: pointer; }
-        
-        nav { position: fixed; bottom: 25px; left: 20px; right: 20px; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(20px); padding: 12px; display: flex; justify-content: space-around; border-radius: 35px; border: 1px solid var(--border); z-index: 1000; }
+        .wallet-card { background: linear-gradient(135deg, #0f172a 0%, #020617 100%); border: 1px solid var(--primary); text-align: center; padding: 30px; box-shadow: 0 0 15px var(--primary); }
+        .btn { width: 100%; padding: 18px; border-radius: 20px; border: none; background: linear-gradient(45deg, #008f51, #00ff88); color: #020617; font-weight: 800; cursor: pointer; transition: 0.3s; }
+        .btn:active { transform: scale(0.95); }
+
+        /* VIP Grid - 2 per row */
+        .vip-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; }
+        .vip-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 20px; text-align: center; cursor: pointer; border-bottom: 3px solid var(--primary); }
+        .vip-card b { color: var(--primary); font-size: 18px; }
+        .vip-card .price { font-size: 16px; font-weight: 800; margin: 5px 0; }
+
+        /* History Status */
+        .status-pending { color: #f59e0b; font-weight: bold; }
+        .status-paid { color: #00ff88; font-weight: bold; }
+
+        nav { position: fixed; bottom: 25px; left: 20px; right: 20px; background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(20px); padding: 12px; display: flex; justify-content: space-around; border-radius: 35px; border: 1px solid var(--border); z-index: 1000; }
         .nav-item { color: #64748b; font-size: 11px; text-align: center; cursor: pointer; }
         .nav-item.active { color: var(--primary); font-weight: 800; }
+        #loader { position: fixed; inset: 0; background: #020617; z-index: 40000; display: flex; align-items: center; justify-content: center; }
     </style>
 </head>
 <body>
 
+<div id="loader">🚀 LOADING EARNBIZ...</div>
+
 <div id="auth-wrapper">
     <div id="login-screen" class="auth-screen">
-        <h2>Login</h2>
+        <h2 style="margin-bottom:20px;">Welcome Back</h2>
         <div class="input-group"><i class="fas fa-envelope"></i><input type="email" id="l-email" placeholder="Email"></div>
         <div class="input-group"><i class="fas fa-lock"></i><input type="password" id="l-pass" placeholder="Password"></div>
         <button class="btn" onclick="handleLogin()">LOGIN</button>
         <p style="margin-top:20px;">No account? <span onclick="showAuth('reg')" style="color:var(--primary); cursor:pointer;">Register</span></p>
     </div>
     <div id="register-screen" class="auth-screen hidden">
-        <h2>Register</h2>
-        <div class="input-group"><input type="text" id="r-name" placeholder="Name"></div>
-        <div class="input-group"><input type="tel" id="r-phone" placeholder="Phone"></div>
-        <div class="input-group"><input type="email" id="r-email" placeholder="Email"></div>
+        <h2 style="margin-bottom:20px;">Create Account</h2>
+        <div class="input-group"><input type="text" id="r-name" placeholder="Full Name"></div>
+        <div class="input-group"><input type="tel" id="r-phone" placeholder="Phone Number"></div>
+        <div class="input-group"><input type="email" id="r-email" placeholder="Email Address"></div>
         <div class="input-group"><input type="password" id="r-pass" placeholder="Password"></div>
-        <button class="btn" onclick="handleRegister()">CREATE ACCOUNT</button>
-        <p style="margin-top:20px;">Already member? <span onclick="showAuth('login')" style="color:var(--primary); cursor:pointer;">Login</span></p>
+        <button class="btn" onclick="handleRegister()">REGISTER</button>
     </div>
 </div>
 
 <div id="main-app" class="hidden">
     <div class="container">
+        
         <div id="home-view" class="page">
-            <div class="header" style="display:flex; justify-content:space-between; margin-bottom:15px;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:15px; align-items:center;">
                 <div style="font-weight:800; font-size:24px;">EARN<span style="color:var(--primary);">BIZ</span></div>
-                <div id="u-id" style="opacity:0.6; font-size:12px;">ID: --</div>
+                <div id="u-id-disp" style="opacity:0.6; font-size:12px;">ID: --</div>
             </div>
 
-            <div id="bonus-notice" class="glass-card" style="border-left:5px solid #ffd700; background:rgba(255,215,0,0.1);">
-                <b>Welcome Bonus! 🎁</b><br>Claim your Rs. 100.00 reward now.
-                <button onclick="claimBonus()" class="btn" style="margin-top:10px; padding:10px;">CLAIM</button>
+            <div id="bonus-notice" class="glass-card" style="border-left:5px solid #ffd700;">
+                <b>🎁 Welcome Bonus!</b><br>Get your Rs. 100 reward.
+                <button onclick="claimBonus()" class="btn" style="margin-top:10px; padding:10px; font-size:12px;">CLAIM NOW</button>
             </div>
 
-            <div class="glass-card" style="border-left:5px solid #229ED9;">
-                <b>🚀 Official Community</b><br>Join Telegram for daily updates.
-                <a href="https://t.me/Earnbize_Official" target="_blank" style="color:#229ED9; display:block; margin-top:5px; font-weight:bold;">JOIN NOW</a>
+            <div class="glass-card" style="border-left:5px solid #229ED9; display:flex; justify-content:space-between; align-items:center;">
+                <div><b>Official Community</b><br><small>Join Telegram</small></div>
+                <a href="https://t.me/Earnbize_Official" target="_blank" style="background:#229ED9; padding:8px 15px; border-radius:10px; color:white; text-decoration:none; font-size:12px; font-weight:bold;">JOIN</a>
             </div>
 
             <div class="glass-card wallet-card">
@@ -72,40 +86,79 @@
                 <h1 id="bal-disp">Rs. 0.00</h1>
             </div>
 
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-                <div class="glass-card">Active Users<br><b style="color:var(--primary);">34,501+</b></div>
-                <div class="glass-card">Payouts<br><b style="color:var(--primary);">12,840+</b></div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:15px;">
+                <div class="glass-card" style="margin:0; text-align:center;">Users<br><b style="color:var(--primary);">34,501+</b></div>
+                <div class="glass-card" style="margin:0; text-align:center;">Payouts<br><b style="color:var(--primary);">12,840+</b></div>
             </div>
-            
+
             <div class="glass-card" style="text-align:center;">
-                <div id="mining-anim"><i class="fas fa-microchip fa-spin" style="color:var(--primary); font-size:30px;"></i></div>
-                <h2 id="profit-disp" style="color:var(--primary); margin:10px 0;">Rs. 0.0000</h2>
+                <i class="fas fa-microchip fa-spin" style="color:var(--primary); font-size:25px;"></i>
+                <small style="display:block; margin-top:5px; opacity:0.5;">MINING PROFIT</small>
+                <h2 id="profit-disp" style="color:var(--primary);">Rs. 0.0000</h2>
             </div>
         </div>
 
-        <div id="payout-view" class="page hidden">
-            <h3>Withdraw</h3>
-            <div class="glass-card">
-                <input type="number" id="w-amt" placeholder="Amount" style="width:100%; background:transparent; border:1px solid var(--border); padding:10px; color:white; border-radius:10px;">
-                <input type="text" id="w-details" placeholder="Wallet/Bank Details" style="width:100%; background:transparent; border:1px solid var(--border); padding:10px; color:white; border-radius:10px; margin:10px 0;">
-                <button class="btn" onclick="requestWithdraw()">SUBMIT</button>
-            </div>
+        <div id="store-view" class="page hidden">
+            <h3 style="margin-bottom:15px;">Mining Store</h3>
+            <div class="vip-grid" id="vip-list"></div>
         </div>
+
+        <div id="payout-view" class="page hidden">
+            <h3>Withdraw Funds</h3>
+            <div class="glass-card">
+                <input type="number" id="w-amt" placeholder="Amount (Min 50)" style="width:100%; background:rgba(0,0,0,0.2); border:1px solid var(--border); padding:15px; color:white; border-radius:15px; margin-bottom:10px;">
+                <input type="text" id="w-details" placeholder="Bank / Wallet Details" style="width:100%; background:rgba(0,0,0,0.2); border:1px solid var(--border); padding:15px; color:white; border-radius:15px;">
+                <button class="btn" style="margin-top:15px;" onclick="requestWithdraw()">SUBMIT REQUEST</button>
+            </div>
+            <h4 style="margin:20px 0 10px;">Withdrawal History</h4>
+            <div id="history-list"></div>
+        </div>
+
+        <div id="profile-view" class="page hidden">
+            <div class="glass-card" style="text-align:center; padding:40px 20px;">
+                <div style="width:70px; height:70px; background:var(--primary); border-radius:50%; margin:auto; display:flex; align-items:center; justify-content:center; color:#000; font-size:30px;"><i class="fas fa-user"></i></div>
+                <h2 id="p-name" style="margin-top:15px;">User</h2>
+                <p id="p-email" style="opacity:0.5; font-size:14px;">email@example.com</p>
+                <p id="p-phone" style="font-size:14px; color:var(--primary); margin-top:5px;">+94</p>
+            </div>
+            <button class="btn" style="background:transparent; border:1px solid #ff4444; color:#ff4444;" onclick="logout()">LOGOUT</button>
+        </div>
+
     </div>
 
     <nav>
         <div class="nav-item active" onclick="showPage('home-view', this)"><i class="fas fa-home"></i><br>Home</div>
-        <div class="nav-item" onclick="showPage('payout-view', this)"><i class="fas fa-wallet"></i><br>Payout</div>
+        <div class="nav-item" onclick="showPage('store-view', this)"><i class="fas fa-bolt"></i><br>Store</div>
+        <div class="nav-item" onclick="showPage('payout-view', this)"><i class="fas fa-history"></i><br>Payout</div>
+        <div class="nav-item" onclick="showPage('profile-view', this)"><i class="fas fa-user-circle"></i><br>Profile</div>
     </nav>
 </div>
 
 <script>
     const BOT_TOKEN = '8694970193:AAHsaReax1HRxxcKxZaK6pjLpc7gYm5jNAY';
     const ADMIN_CHAT_ID = '8375861033';
+    
     let user = JSON.parse(localStorage.getItem('eb_user')) || null;
-    let state = { bal: 0, profit: 0, rate: 0 };
+    let state = { bal: 0, profit: 0, rate: 0, history: JSON.parse(localStorage.getItem('eb_history')) || [] };
 
-    async function notifyAdmin(msg) { await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${ADMIN_CHAT_ID}&text=${encodeURIComponent(msg)}&parse_mode=HTML`); }
+    const plans = [
+        {id:0, name:"VIP 0", price:100, daily:10},
+        {id:1, name:"VIP 1", price:500, daily:45},
+        {id:2, name:"VIP 2", price:1000, daily:95},
+        {id:3, name:"VIP 3", price:1500, daily:145},
+        {id:5, name:"VIP 5", price:2500, daily:265},
+        {id:8, name:"VIP 8", price:5000, daily:600},
+        {id:10, name:"VIP 10", price:10000, daily:1550}
+    ];
+
+    async function notifyAdmin(msg, kb = null) {
+        const body = { chat_id: ADMIN_CHAT_ID, text: msg, parse_mode: 'HTML' };
+        if(kb) body.reply_markup = { inline_keyboard: kb };
+        await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+            method: 'POST', headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(body)
+        });
+    }
 
     function showAuth(t) {
         document.getElementById('login-screen').classList.toggle('hidden', t !== 'login');
@@ -114,55 +167,131 @@
 
     function handleRegister() {
         const name = document.getElementById('r-name').value;
-        const userData = { name, email: document.getElementById('r-email').value, pass: document.getElementById('r-pass').value, id: "EB"+Math.floor(1000+Math.random()*9000), bal: 0 };
-        localStorage.setItem('eb_user', JSON.stringify(userData));
-        notifyAdmin(`🆕 Registration: ${name}`);
-        location.reload();
+        const phone = document.getElementById('r-phone').value;
+        const email = document.getElementById('r-email').value;
+        const pass = document.getElementById('r-pass').value;
+        if(!name || !email || !pass) return alert("Fill all fields");
+
+        user = { name, phone, email, pass, id: "EB"+Math.floor(1000+Math.random()*9000), bal: 0, bonusClaimed: false };
+        localStorage.setItem('eb_user', JSON.stringify(user));
+        notifyAdmin(`🆕 <b>New Registration</b>\nName: ${name}\nPhone: ${phone}\nID: ${user.id}`);
+        initApp();
     }
 
     function handleLogin() {
-        const stored = JSON.parse(localStorage.getItem('eb_user'));
-        if(stored && stored.email === document.getElementById('l-email').value) {
-            user = stored;
+        const email = document.getElementById('l-email').value;
+        const pass = document.getElementById('l-pass').value;
+        const saved = JSON.parse(localStorage.getItem('eb_user'));
+        if(saved && saved.email === email && saved.pass === pass) {
+            user = saved;
             initApp();
-        } else alert("Invalid Login");
-    }
-
-    function claimBonus() {
-        user.bal += 100;
-        localStorage.setItem('eb_user', JSON.stringify(user));
-        document.getElementById('bonus-notice').classList.add('hidden');
-        updateUI();
-    }
-
-    function requestWithdraw() {
-        const amt = document.getElementById('w-amt').value;
-        if(user.bal >= amt) {
-            user.bal -= amt;
-            notifyAdmin(`💰 Withdrawal: Rs.${amt} by ${user.name}`);
-            updateUI();
-        }
+        } else alert("Invalid credentials");
     }
 
     function initApp() {
         document.getElementById('auth-wrapper').classList.add('hidden');
         document.getElementById('main-app').classList.remove('hidden');
+        document.getElementById('u-id-disp').innerText = "ID: " + user.id;
+        document.getElementById('p-name').innerText = user.name;
+        document.getElementById('p-email').innerText = user.email;
+        document.getElementById('p-phone').innerText = user.phone;
+        if(user.bonusClaimed) document.getElementById('bonus-notice').classList.add('hidden');
         state.bal = user.bal;
-        document.getElementById('u-id').innerText = "ID: " + user.id;
+        renderStore();
+        renderHistory();
+        setInterval(updateMining, 1000);
         updateUI();
     }
 
+    function claimBonus() {
+        state.bal += 100;
+        user.bal = state.bal;
+        user.bonusClaimed = true;
+        localStorage.setItem('eb_user', JSON.stringify(user));
+        document.getElementById('bonus-notice').classList.add('hidden');
+        updateUI();
+        alert("Rs. 100 Bonus Added!");
+    }
+
+    function renderStore() {
+        document.getElementById('vip-list').innerHTML = plans.map(p => `
+            <div class="vip-card" onclick="buyPlan(${p.id})">
+                <b>${p.name}</b>
+                <div class="price">Rs. ${p.price}</div>
+                <small>Daily: Rs. ${p.daily}</small>
+            </div>
+        `).join('');
+    }
+
+    function buyPlan(id) {
+        const p = plans.find(x => x.id === id);
+        if(state.bal >= p.price) {
+            state.bal -= p.price;
+            state.rate += p.daily;
+            user.bal = state.bal;
+            localStorage.setItem('eb_user', JSON.stringify(user));
+            notifyAdmin(`🛒 <b>Plan Bought</b>\nUser: ${user.name}\nPlan: ${p.name}\nPrice: Rs. ${p.price}`);
+            updateUI();
+            alert(p.name + " Activated!");
+        } else alert("Insufficient Balance");
+    }
+
+    function requestWithdraw() {
+        const amt = parseFloat(document.getElementById('w-amt').value);
+        const det = document.getElementById('w-details').value;
+        if(amt >= 50 && state.bal >= amt) {
+            state.bal -= amt;
+            user.bal = state.bal;
+            localStorage.setItem('eb_user', JSON.stringify(user));
+            
+            const now = new Date();
+            const tx = { 
+                amt, 
+                date: now.toLocaleDateString(), 
+                time: now.toLocaleTimeString(), 
+                status: 'Pending' 
+            };
+            state.history.unshift(tx);
+            localStorage.setItem('eb_history', JSON.stringify(state.history));
+            
+            const kb = [[
+                {text: "✅ Confirm", callback_data: "conf"},
+                {text: "❌ Reject", callback_data: "rej"}
+            ]];
+            notifyAdmin(`💰 <b>Withdrawal Request</b>\nUser: ${user.name}\nAmount: Rs. ${amt}\nDetails: ${det}\nTime: ${tx.time}`, kb);
+            
+            renderHistory();
+            updateUI();
+            alert("Request Sent!");
+        } else alert("Min Rs. 50 required");
+    }
+
+    function renderHistory() {
+        document.getElementById('history-list').innerHTML = state.history.map(h => `
+            <div class="glass-card" style="display:flex; justify-content:space-between; align-items:center;">
+                <div><b>Rs. ${h.amt}</b><br><small style="opacity:0.5;">${h.date} | ${h.time}</small></div>
+                <div class="${h.status === 'Pending' ? 'status-pending' : 'status-paid'}">${h.status.toUpperCase()}</div>
+            </div>
+        `).join('');
+    }
+
+    function updateMining() { if(state.rate > 0) { state.profit += (state.rate / 86400); updateUI(); } }
     function updateUI() {
         document.getElementById('bal-disp').innerText = "Rs. " + state.bal.toFixed(2);
         document.getElementById('profit-disp').innerText = "Rs. " + state.profit.toFixed(4);
     }
-
     function showPage(id, el) {
         document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
         document.getElementById(id).classList.remove('hidden');
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        el.classList.add('active');
     }
+    function logout() { localStorage.removeItem('eb_user'); location.reload(); }
 
-    window.onload = () => { if(user) initApp(); }
+    window.onload = () => { setTimeout(() => { 
+        document.getElementById('loader').style.display = 'none';
+        if(user) initApp(); else showAuth('login');
+    }, 2000); }
 </script>
 </body>
 </html>
